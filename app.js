@@ -12,7 +12,7 @@ const render = require("./lib/htmlRenderer");
 
 
 // Write code to use inquirer to gather information about the development team members,
-
+ 
 function addEmployees() {
     inquirer.prompt([
 
@@ -36,7 +36,7 @@ function addEmployees() {
             message: "What is the employees id?",
             name: "id",
             
-          }]).then(function(response){
+          },]).then(function(response){
               if (response.role === "intern"){
                   addIntern();
               } else if (response.role === "engineer"){
@@ -44,7 +44,7 @@ function addEmployees() {
               } else {
                   addManager()
               }
-          })
+          });
 
           function addIntern() {
               inquirer.prompt ([
@@ -54,6 +54,10 @@ function addEmployees() {
                     message: "What is the interns school"
                   }
               ])
+            
+                
+            
+            // console.log(addIntern);
           }
 
           function addManager() {
@@ -64,6 +68,7 @@ function addEmployees() {
                   message: "What is managers office number?"
                 }
             ])
+
         }
         function addEngineer() {
             inquirer.prompt ([
@@ -73,8 +78,10 @@ function addEmployees() {
                   message: "What is the engineers github?"
                 }
             ])
+            
         }
-        };
+       
+    };
           addEmployees();
             
 // and to create objects for each team member (using the correct classes as blueprints!)
