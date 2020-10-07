@@ -35,6 +35,7 @@ function addEmployees() {
             type: "input",
             message: "What is the employees id?",
             name: "id",
+            
           }]).then(function(response){
               if (response.role === "intern"){
                   addIntern();
