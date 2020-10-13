@@ -10,98 +10,95 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+let employeeArr = [];
 
 // Write code to use inquirer to gather information about the development team members,
- 
+ let questions = [
+
+  {
+      type: "input",
+      name: "name",
+      message: "What is the employees name?"
+    },
+    {
+      type: "list",
+      message: "What is the employees role?",
+      name: "role",
+      choices: [
+        "manager", 
+        "engineer", 
+        "intern", 
+      ]
+    },
+    {
+      type: "input",
+      message: "What is the employees email?",
+      name: "email",
+    },
+    {
+      type: "input",
+      message: "What is the managers office number?",
+      name: "OfficeNum",
+      when: function(answers) {
+        return answers.role === "manager"
+      }
+      
+    },
+    {
+      type: "input",
+      message: "Whats is the interns school?",
+      name: "school",
+      when: function(answers) {
+        return answers.role === "intern"
+      }
+      
+    },
+    {
+      type: "input",
+      message: "What is the engineers github?",
+      name: "gitHub",
+      when: function(answers) {
+        return answers.role === "engineer"
+      }
+      
+    },
+    {
+    type: "confirm",
+    message: "Do you want to add another employee?",
+    name: "askAgain",
+    default: true,
+    },
+
+  ]
 function addEmployees() {
-    inquirer.prompt([
+    inquirer.prompt(questions).then(answers=> {
+      var person;
+      if (answers.role === "manager") {
+        person = new Manager(answers.name, Date.now(),answers.OfficeNum, answers.email);
+      }else if (answers.role === "intern") {
+        person = new Intern(answers.name, Date.now(),answers.school, answers.email);
+      }else if (answers.role === "engineer") {
+        person = new Engineer(answers.name, Date.now(),answers.gitHub, answers.email);
+      };
+      employeeArr.push(person);
+      if (answers.askAgain) {
+        addEmployees()
+        
+      }else {
+        renderHtml()
+        console.log("added employees")
+      }
+  
+    });
+  };
+   addEmployees();   
 
-        {
-            type: "input",
-            name: "name",
-            message: "What is the employees name?"
-          },
-          {
-            type: "list",
-            message: "What is the employees role?",
-            name: "role",
-            choices: [
-              "manager", 
-              "engineer", 
-              "intern", 
-            ]
-          },
-          {
-            type: "input",
-            message: "What is the employees id?",
-            name: "id",
+   function renderHtml() {
+     let html = render(employeeArr);
+     fs.writeFile("./templates/team.html", html, function(err, data){
+       if (err) 
+       console.log(err);
+     });
+
+   };
             
-          },]).then(function(response){
-              if (response.role === "intern"){
-                  addIntern();
-              } else if (response.role === "engineer"){
-                  addEngineer();
-              } else {
-                  addManager()
-              }
-          });
-
-          function addIntern() {
-              inquirer.prompt ([
-                  {
-                    type: "input",
-                    name: "school",
-                    message: "What is the interns school"
-                  }
-              ])
-            
-                
-            
-            // console.log(addIntern);
-          }
-
-          function addManager() {
-            inquirer.prompt ([
-                {
-                  type: "input",
-                  name: "officeNumber",
-                  message: "What is managers office number?"
-                }
-            ])
-
-        }
-        function addEngineer() {
-            inquirer.prompt ([
-                {
-                  type: "input",
-                  name: "gitHub",
-                  message: "What is the engineers github?"
-                }
-            ])
-            
-        }
-       
-    };
-          addEmployees();
-            
-// and to create objects for each team member (using the correct classes as blueprints!)
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
